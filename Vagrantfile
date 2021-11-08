@@ -1,3 +1,10 @@
+$script_mysql = <<-SCRIPT
+    apt-get update && \
+    apt-get install -y mysql-server-5.7 && \
+    mysql -e "create user 'phpuser'@'%' identified by 'pass';"
+SCRIPT
+
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -17,6 +24,8 @@ Vagrant.configure("2") do |config|
   config.vm.network "public_network", ip: "192.168.0.17"
   config.vm.provision "shell", 
     inline: "cat /configs/id-bionic.pub >> .ssh/authorized_keys"
+  config.vm.provision "shell", inline: $script_mysql
+  config.vm.provision "shell", inline: "service mysql restart"
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder "./configs", "/configs"
