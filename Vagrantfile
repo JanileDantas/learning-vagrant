@@ -35,8 +35,16 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "phpweb" do |phpweb|
-    phpweb.vm.network "forwarded_port", guest: 80, host: 8089
-    phpweb.vm.network "public_network", ip: "192.168.0.18"    
+    phpweb.vm.network "forwarded_port", guest: 8888, host: 8888
+    phpweb.vm.network "public_network", ip: "192.168.0.18"
+
+    phpweb.vm.provision "shell", 
+      inline: "apt-get update -y && apt-get install -y puppet"
+
+    phpweb.vm.provision "puppet" do |puppet|
+      puppet.manifests_path = "./configs/manifests"
+      puppet.manifest_file = "phpweb.pp"
+    end
   end  
 
   # Disable automatic box update checking. If you disable this, then
