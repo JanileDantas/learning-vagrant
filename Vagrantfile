@@ -25,6 +25,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", 
     inline: "cat /configs/id-bionic.pub >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: $script_mysql
+  config.vm.provision "shell", 
+    inline: "cat /configs/mysqld.cnf > /etc/mysql/mysql.conf.d/mysqld.cnf"
   config.vm.provision "shell", inline: "service mysql restart"
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
