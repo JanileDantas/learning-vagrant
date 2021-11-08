@@ -20,17 +20,23 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "hashicorp/bionic64"
-  config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "public_network", ip: "192.168.0.17"
-  config.vm.provision "shell", 
-    inline: "cat /configs/id-bionic.pub >> .ssh/authorized_keys"
-  config.vm.provision "shell", inline: $script_mysql
-  config.vm.provision "shell", 
-    inline: "cat /configs/mysqld.cnf > /etc/mysql/mysql.conf.d/mysqld.cnf"
-  config.vm.provision "shell", inline: "service mysql restart"
 
-  config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.synced_folder "./configs", "/configs"
+  config.vm.define "mysqldb" do |mysql|
+    mysql.vm.network "public_network", ip: "192.168.0.17"
+    mysql.vm.provision "shell", 
+      inline: "cat /configs/id-bionic.pub >> .ssh/authorized_keys"
+    mysql.vm.provision "shell", inline: $script_mysql
+    mysql.vm.provision "shell", 
+      inline: "cat /configs/mysqld.cnf > /etc/mysql/mysql.conf.d/mysqld.cnf"
+    mysql.vm.provision "shell", inline: "service mysql restart"
+
+    mysql.vm.synced_folder ".", "/vagrant", disabled: true
+    mysql.vm.synced_folder "./configs", "/configs"
+  end
+
+  config.vm.define "phpweb" do |phpweb|
+    phpweb.vm.network "public_network", ip: "192.168.0.18"    
+  end  
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
