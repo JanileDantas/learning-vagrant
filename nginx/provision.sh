@@ -4,7 +4,7 @@ apt-get -y install nginx
 
 cd /
 
-rm -rf /var/www/html 
-ln -s /vagrant/www /var/www/html 
+rm -rf etc/nginx/sites-enabled
+cp -r vagrant/sites-enabled etc/nginx
 
 service nginx start
